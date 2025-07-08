@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from .models import Issue
 from .serializers import IssueSerializer
+from apps.issues.ml_utils import predict_issue_type
 
 class IssueViewSet(viewsets.ModelViewSet):
     queryset = Issue.objects.all()
