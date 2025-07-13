@@ -21,4 +21,7 @@ class IssueViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         instance = serializer.save(reported_by=self.request.user)
-        instance.save()
+        if instance.image:
+            predicted_type = predict_issue_type(instance.image.path)
+            instance.issue_type = predicted_type
+            instance.save()
