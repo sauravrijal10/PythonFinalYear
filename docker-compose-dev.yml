@@ -1,22 +1,39 @@
 version: "3.9"
 
 services:
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   web:
     build:
       context: .
       dockerfile: Dockerfile
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "sleep 10 && python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/usr/src/app
-      - ./db.sqlite3:/usr/src/app/db.sqlite3 
       - ./ML/train_issue_classifier.keras:/usr/src/app/ML/train_issue_classifier.keras
       - static_volume:/usr/src/app/staticfiles
-    expose:
-      - 8000
     ports:
-      - 8000:8000
-    env_file:
-      - ./.env
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=mydb
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword
 
 volumes:
+  mysql_data:
   static_volume:
