@@ -5,18 +5,21 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:9000"
     volumes:
       - .:/usr/src/app
       - ./db.sqlite3:/usr/src/app/db.sqlite3 
       - ./ML/train_issue_classifier.keras:/usr/src/app/ML/train_issue_classifier.keras
       - static_volume:/usr/src/app/staticfiles
+    environment:
+      SQLITE_DB_PATH: /usr/src/app/dbdata/db.sqlite3
     expose:
-      - 8000
+      - 9000
     ports:
-      - 8000:8000
+      - 9000:9000
     env_file:
       - ./.env
 
 volumes:
+  sqlite_data:
   static_volume:
