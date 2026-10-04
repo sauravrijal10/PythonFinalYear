@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:9000"
+    command: sh -c "python manage.py migrate && python manage.py ensure_superuser && python manage.py runserver 0.0.0.0:9000"
     volumes:
       - .:/usr/src/app
       - ./db.sqlite3:/usr/src/app/db.sqlite3 
@@ -13,6 +13,9 @@ services:
       - static_volume:/usr/src/app/staticfiles
     environment:
       SQLITE_DB_PATH: /usr/src/app/dbdata/db.sqlite3
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+      DJANGO_SUPERUSER_PASSWORD: admin
+      DJANGO_SUPERUSER_PHONE: ""
     expose:
       - 9000
     ports:
